@@ -6,6 +6,6 @@
 # help <query> - Displays all help commands that match <query>.
 
 module.exports = (robot) ->
-  robot.respond /outright$/i, (msg) ->
-    msg.send "hello from outright"
+  robot.respond /build my (.+) branch$/i, (msg) ->
+    msg.send "Changing your Jenkins job to build #{msg}"
 
