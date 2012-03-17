@@ -1,9 +1,8 @@
-# Generates help commands for Hubot.
+# Manage the Outright Jenkins CI
 #
-# These commands are grabbed from comment blocks at the top of each file.
-#
-# help - Displays all of the help commands that Hubot knows about.
-# help <query> - Displays all help commands that match <query>.
+# build my <branch> branch - Set's up Jenkins to point your CI at a specified branch
+# whats my ci building - Tells you what branch your CI is currently building
+# kick off my build - Kicks off a new build of your CI on Jenkins
 
 module.exports = (robot) ->
   robot.respond /build my (.+) branch$/i, (msg) ->
