@@ -36,7 +36,7 @@ module.exports = (robot) ->
           msg.send("Ok... just kicked off a build of your CI")
 
   robot.respond /how'?s my build/i, (msg) ->
-    msg.http("http://localhost:9292/api/jenkins/job/status")
+    msg.http("http://admin.outright.com:8080/api/jenkins/job/status")
       .query(user: msg.message.user.githubLogin)
       .get() (err, res, body) ->
         if res.statusCode != 200 || err
