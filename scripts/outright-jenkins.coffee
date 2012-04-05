@@ -34,3 +34,29 @@ module.exports = (robot) ->
           msg.send("There was a problem building your CI")
         else
           msg.send("Ok... just kicked off a build of your CI")
+
+  robot.respond /how'?s my build/i, (msg) ->
+    msg.http("http://localhost:9292/api/jenkins/job/status")
+      .query(user: msg.message.user.githubLogin)
+      .get() (err, res, body) ->
+        if res.statusCode != 200 || err
+          msg.send("There was a problem checking the status of your CI")
+        else
+          json = JSON.parse(body)
+
+          successful = []
+          failed     = []
+          building   = []
+          for branch, success of json
+            successful.push branch if success == true
+            failed.push branch     if success == false
+            building.push branch   if success == null
+
+          message = "#{msg.message.user.name}: "
+          if failed.length
+            message += "You have your #{failed.join(", ")} builds failing"
+          else
+            message += "All green"
+
+          msg.send("#{message} with #{building.length} other jobs building")
+
