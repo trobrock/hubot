@@ -61,7 +61,7 @@ module.exports = (robot) ->
           msg.send("#{message} with #{building.length} other jobs building")
 
   robot.respond /create my ci/i, (msg) ->
-    msg.http("http://localhost:9292/api/jenkins/create")
+    msg.http("http://admin.outright.com:8080/api/jenkins/create")
       .query(user: msg.message.user.githubLogin)
       .post() (err, res, body) ->
         if res.statusCode != 200 || err
