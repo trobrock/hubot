@@ -60,3 +60,16 @@ module.exports = (robot) ->
 
           msg.send("#{message} with #{building.length} other jobs building")
 
+  robot.respond /create my ci/i, (msg) ->
+    msg.http("http://localhost:9292/api/jenkins/create")
+      .query(user: msg.message.user.githubLogin)
+      .post() (err, res, body) ->
+        if res.statusCode != 200 || err
+          msg.send("There was a problem creating your CI")
+        else
+          json = JSON.parse(body)
+
+          if json.success == true
+            msg.send("Ok your CI is setup to build your master branch.")
+          else
+            msg.send("You already have a CI set up")
