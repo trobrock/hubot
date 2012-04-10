@@ -4,11 +4,14 @@
 # whats my ci building - Tells you what branch your CI is currently building
 # kick off my build - Kicks off a new build of your CI on Jenkins
 
+ADMIN_URL = "http://admin.outright.com:8080"
+# ADMIN_URL = "http://localhost:9292"
+
 module.exports = (robot) ->
   robot.respond /build my (.+) branch$/i, (msg) ->
     branch = msg.match[1]
 
-    msg.http("http://admin.outright.com:8080/api/jenkins/job/config")
+    msg.http("#{ADMIN_URL}/api/jenkins/job/config")
       .query(user: msg.message.user.githubLogin, branch: branch)
       .post() (err, res, body) ->
         if res.statusCode != 200 || err
@@ -17,7 +20,7 @@ module.exports = (robot) ->
           msg.send("Ok... it's set up to build your #{branch} branch")
 
   robot.respond /whats my ci building/i, (msg) ->
-    msg.http("http://admin.outright.com:8080/api/jenkins/job/config")
+    msg.http("#{ADMIN_URL}/api/jenkins/job/config")
       .query(user: msg.message.user.githubLogin)
       .get() (err, res, body) ->
         if res.statusCode != 200 || err
@@ -27,7 +30,7 @@ module.exports = (robot) ->
           msg.send("CI is building your #{branch} branch")
 
   robot.respond /kick off my build/i, (msg) ->
-    msg.http("http://admin.outright.com:8080/api/jenkins/job/build")
+    msg.http("#{ADMIN_URL}/api/jenkins/job/build")
       .query(user: msg.message.user.githubLogin)
       .post() (err, res, body) ->
         if res.statusCode != 200 || err
@@ -36,7 +39,7 @@ module.exports = (robot) ->
           msg.send("Ok... just kicked off a build of your CI")
 
   robot.respond /how'?s my build/i, (msg) ->
-    msg.http("http://admin.outright.com:8080/api/jenkins/job/status")
+    msg.http("#{ADMIN_URL}/api/jenkins/job/status")
       .query(user: msg.message.user.githubLogin)
       .get() (err, res, body) ->
         if res.statusCode != 200 || err
@@ -61,7 +64,7 @@ module.exports = (robot) ->
           msg.send("#{message} with #{building.length} other jobs building")
 
   robot.respond /create my ci/i, (msg) ->
-    msg.http("http://admin.outright.com:8080/api/jenkins/create")
+    msg.http("#{ADMIN_URL}/api/jenkins/create")
       .query(user: msg.message.user.githubLogin)
       .post() (err, res, body) ->
         if res.statusCode != 200 || err
@@ -73,3 +76,17 @@ module.exports = (robot) ->
             msg.send("Ok your CI is setup to build your master branch.")
           else
             msg.send("You already have a CI set up")
+
+  robot.respond /update my ci build/i, (msg) ->
+    msg.http("#{ADMIN_URL}/api/jenkins/update")
+      .query(user: msg.message.user.githubLogin)
+      .post() (err, res, body) ->
+        if res.statusCode != 200 || err
+          msg.send("There was a problem updating your CI")
+        else
+          json = JSON.parse(body)
+
+          if json.success == true
+            msg.send("Ok your CI is updated to the latest templates")
+          else
+            msg.send("You don't have a CI setup yet")
