@@ -177,3 +177,4 @@ module.exports = (robot) ->
   robot.respond /stop (spinning|dj)/i, (message) ->
     authedRequest message, '/dj', 'delete', {note: "github-dj-#{message.message.user.githubLogin}"}, (err, res, body) ->
       message.send("Nice work. You really did a great job. Your session has been saved and added to Play as: #{body}")
+
