@@ -18,6 +18,6 @@ module.exports = (robot) ->
       "Hmmm..."
     ]
 
-    answer = answers.shuffle().pop()
+    answer = answers[Math.floor(Math.random()*answers.length)]
 
     msg.send answer
