@@ -26,10 +26,12 @@
 URL = "#{process.env.HUBOT_PLAY_URL}"
 
 authedRequest = (message, path, action, options, callback) ->
+  console.log "Making request to #{URL}#{path} with login:#{message.message.user.githubLogin}, token:#{process.env.HUBOT_PLAY_TOKEN}"
   message.http("#{URL}#{path}")
     .query(login: message.message.user.githubLogin, token: "#{process.env.HUBOT_PLAY_TOKEN}")
     .header('Content-Length', 0)
     .query(options)[action]() (err, res, body) ->
+      console.log "Received #{body}"
       callback(err,res,body)
 
 module.exports = (robot) ->
