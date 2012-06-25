@@ -31,7 +31,8 @@ authedRequest = (message, path, action, options, callback) ->
     .query(login: message.message.user.githubLogin, token: "#{process.env.HUBOT_PLAY_TOKEN}")
     .header('Content-Length', 0)
     .query(options)[action]() (err, res, body) ->
-      console.log "Received #{body}"
+      try
+        body = JSON.parse(body)
       callback(err,res,body)
 
 module.exports = (robot) ->
