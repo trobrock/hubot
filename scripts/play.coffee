@@ -33,9 +33,16 @@ authedRequest = (message, path, action, options, callback) ->
     .header('Content-Length', 0)
     .query(options)[action]() (err, res, body) ->
       console.log "Received from #{URL}#{path}: #{body}"
-      try
-        body = JSON.parse(body)
-      callback(err,res,body)
+      body = ""
+      res.on 'data', (chunk) ->
+        body += chunk
+      res.on 'end', ->
+        console.log "BODY is now: #{body}"
+        callback null, res, JSON.parse(body)
+
+      # try
+      #   body = JSON.parse(body)
+      # callback(err,res,body)
 
 module.exports = (robot) ->
   robot.respond /where'?s play/i, (message) ->
