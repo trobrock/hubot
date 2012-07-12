@@ -23,14 +23,16 @@
 # say <message> - `say` your message over your speakers.
 # clear play - Clears the Play queue.
 
+util = require 'util'
 URL = "#{process.env.HUBOT_PLAY_URL}"
 
 authedRequest = (message, path, action, options, callback) ->
-  console.log "Making request to #{URL}#{path} with login:#{message.message.user.githubLogin}, token:#{process.env.HUBOT_PLAY_TOKEN}"
+  console.log "Making request to #{URL}#{path} with login:#{message.message.user.githubLogin}, token:#{process.env.HUBOT_PLAY_TOKEN} with action #{action} and options #{util.inspect(options)}"
   message.http("#{URL}#{path}")
     .query(login: message.message.user.githubLogin, token: "#{process.env.HUBOT_PLAY_TOKEN}")
     .header('Content-Length', 0)
     .query(options)[action]() (err, res, body) ->
+      console.log "Received from #{URL}#{path}: #{body}"
       try
         body = JSON.parse(body)
       callback(err,res,body)
