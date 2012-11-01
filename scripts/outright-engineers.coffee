@@ -1,4 +1,23 @@
-# Outright people are awesome
+# Description
+#   Outright people are awesome
+#
+# Dependencies:
+#   none
+#
+# Configuration:
+#   TRACKER_TOKEN
+#
+# Commands:
+#   hubot what's best in life - cool video of, well, what's best in life
+#   hubot what's going on with the importers? - an attempt at guessing what's up with the importers. Don't take it seriously though
+#   hubot automate <this idea I have> - Add an idea for something you would like to see automated with hubot
+#
+# Notes:
+#   no notes
+#
+# Author:
+#   trobrock
+#   julio
 
 xml2js = require('xml2js')
 
@@ -32,3 +51,18 @@ module.exports = (robot) ->
         parser.parseString body, (err, result) ->
           mau = result.root.item.pop()
           msg.send "#{msg.message.user.name}, current MAU is #{mau}"
+
+  # Tell hubot to tell tracker to automate this new idea one day
+  # The automations project ID on tracker is 679315
+  # post to
+  # http://www.pivotaltracker.com/services/v3/projects/679315/stories
+  # TODO: make it so it's generic to any project
+  robot.respond /(automate|tracker|pt) (.*)/i, (msg) ->
+    msg.http('http://www.pivotaltracker.com/services/v3/projects/679315/stories')
+      .header("X-TrackerToken", process.env.TRACKER_TOKEN)
+      .query("story[name]": msg.match[2])
+      .post(msg.match[2]) (err, res, body) ->
+        if res.statusCode != 200 || err
+          msg.send("Could not add this idea to the automations project.")
+        else
+          msg.send("Ok, someone will consider implementing that fine idea.")
