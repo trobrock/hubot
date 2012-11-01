@@ -1,5 +1,7 @@
 # Outright people are awesome
 
+xml2js = require('xml2js')
+
 module.exports = (robot) ->
   robot.respond /what'?s best in life\??/i, (msg) ->
     msg.send "To crush your enemies, see them driven before you, and to hear the lamentation of their women"
@@ -21,3 +23,12 @@ module.exports = (robot) ->
     answer = answers[Math.floor(Math.random()*answers.length)]
 
     msg.send answer
+
+  robot.respond /(what'?s )?mau/i, (msg) ->
+    msg.http("http://outright:salarium17@analytics.outright.com/widgets/mau")
+      .query(key: "9fa76110375e94f647121c9e0f3f04fd6140e0e7")
+      .get() (err, res, body) ->
+        parser = new xml2js.Parser()
+        parser.parseString body, (err, result) ->
+          mau = result.root.item.pop()
+          msg.send "#{msg.message.user.name}, current MAU is #{mau}"
